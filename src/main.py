@@ -1,3 +1,4 @@
+import logging
 from fastapi import FastAPI
 
 app = FastAPI(
@@ -10,5 +11,5 @@ app = FastAPI(
 @app.post('/',
           description='Update receiver')
 async def respond(update):
-    print(update)
+    logging.debug(update)
     return True
