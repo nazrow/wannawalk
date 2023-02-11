@@ -30,6 +30,10 @@ class UserMemory:
         self.in_middle = False
         self.last_location = None
         self.last_distance = None
+    def parse_message(self, message):
+        pass
+    async def generate_response(self):
+        pass
 
 class Memory:
     def __init__(self):
@@ -46,10 +50,11 @@ memory = Memory()
 async def respond(update: Update):
     if not update.message:
         return 422
+    print(update.message)
     uid = update.message.get('from', {}).get('id')
     if not uid:
         return 400
-    print(f'A message from {uid}!')
     status = memory.find_user(uid)
     print(f'Current status of user {uid}: {vars(status)}')
-    return 200
+    status.parse_message(update.message)
+    return await status.generate_response()
