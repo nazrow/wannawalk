@@ -28,5 +28,13 @@ class Update(BaseModel):
 @app.post('/',
           description='Update receiver')
 async def respond(update: Update):
-    print(update)
-    return True
+    if not update.message:
+        return 422
+    uid = update.message.get('from', {}).get('id')
+    if not uid:
+        return 400
+    chid = update.message.get('chat', {}).get('id')
+    if not chid:
+        return 400
+    print(f'A message from {uid} in {chid}!')
+    return 200
