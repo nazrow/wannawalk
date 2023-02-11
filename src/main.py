@@ -11,3 +11,4 @@ app = FastAPI(
           description='Update receiver')
 async def respond(update):
     print('Got some')
+    return True
