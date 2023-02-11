@@ -1,0 +1,2 @@
+# wannawalk
+Random geopoints generator
