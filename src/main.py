@@ -1,4 +1,3 @@
-import logging
 from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import Optional
@@ -8,8 +7,6 @@ app = FastAPI(
     description='Random point generator',
     version='1.0'
 )
-logger = logging.getLogger(__name__)
-logger.setLevel(10)
 
 class Update(BaseModel):
     update_id: int
@@ -31,5 +28,5 @@ class Update(BaseModel):
 @app.post('/',
           description='Update receiver')
 async def respond(update: Update):
-    logger.debug(update)
+    print(update)
     return True
