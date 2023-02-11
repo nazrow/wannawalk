@@ -163,11 +163,11 @@ class Memory:
 
 
 memory = Memory()
-
+TOKEN = os.environ.get("WANNAWALK_TOKEN")
 
 async def send_message(chid, text):
     async with aiohttp.ClientSession() as session:
-        async with session.post(f'https://api.telegram.org/bot{os.environ.get("WANNAWALK_TOKEN")}/sendMessage', json={'chat_id': chid, 'text': text}) as response:
+        async with session.post(f'https://api.telegram.org/bot{TOKEN}/sendMessage', json={'chat_id': chid, 'text': text}) as response:
             print(response.status)
 
 
