@@ -190,7 +190,7 @@ async def send_location(chid, start, distance):
         current_long = current_long - step_long
         distance_value -= step
     async with aiohttp.ClientSession() as session:
-        async with session.post(f'https://api.telegram.org/bot{TOKEN}/sendLocation', json={'chat_id': chid, 'latitude': current_lat, 'longitude': current_long, 'reply_markup': [[{'text': '🎲'}]]}) as response:
+        async with session.post(f'https://api.telegram.org/bot{TOKEN}/sendLocation', json={'chat_id': chid, 'latitude': current_lat, 'longitude': current_long, 'reply_markup': {'keyboard': [[{'text': '🎲'}]], 'one_time_keyboard': True}}) as response:
             print(response.status)
             body = await response.text()
             print(body)
