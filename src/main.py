@@ -4,10 +4,11 @@ from pydantic import BaseModel
 from typing import Optional
 
 app = FastAPI(
-    title='Wanna Walk',
+    title='I Wanna Walk',
     description='Random point generator',
     version='1.0'
 )
+logging.setLevel(logging.DEBUG)
 
 class Update(BaseModel):
     update_id: int
