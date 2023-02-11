@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  wannawalk:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:7000
+    volumes:
+      - ./src:/app
