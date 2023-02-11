@@ -199,7 +199,7 @@ async def send_location(chid, start, distance):
     async with aiohttp.ClientSession() as session:
         async with session.post(f'https://api.telegram.org/bot{TOKEN}/sendLocation',
                                 json={'chat_id': chid, 'latitude': current_lat, 'longitude': current_long}) as response:
-            pass
+            print(await response.text())
         async with session.post(f'https://api.telegram.org/bot{TOKEN}/sendMessage',
                                 json={'chat_id': chid,
                                       'text': f'Your location is:\n\n`{current_lat}, {current_long}`'
@@ -211,7 +211,7 @@ async def send_location(chid, start, distance):
                                       #     'one_time_keyboard': True
                                       # }
                                       }) as response:
-            pass
+            print(await response.text())
 
 
 @app.post('/',
