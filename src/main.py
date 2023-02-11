@@ -8,8 +8,8 @@ app = FastAPI(
     description='Random point generator',
     version='1.0'
 )
-logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
+logger = logging.getLogger(__name__)
+logger.setLevel(10)
 
 class Update(BaseModel):
     update_id: int
