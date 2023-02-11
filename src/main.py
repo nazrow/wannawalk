@@ -1,6 +1,7 @@
 import logging
 from fastapi import FastAPI
-from pydantic import BaseModel, Optional
+from pydantic import BaseModel
+from typing import Optional
 
 app = FastAPI(
     title='Wanna Walk',
