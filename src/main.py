@@ -8,7 +8,8 @@ app = FastAPI(
     description='Random point generator',
     version='1.0'
 )
-logging.setLevel(logging.DEBUG)
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
 
 class Update(BaseModel):
     update_id: int
@@ -30,5 +31,5 @@ class Update(BaseModel):
 @app.post('/',
           description='Update receiver')
 async def respond(update: Update):
-    logging.debug(update)
+    logger.debug(update)
     return True
