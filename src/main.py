@@ -25,6 +25,22 @@ class Update(BaseModel):
     chat_member: Optional[dict] = None
     chat_join_request: Optional[dict] = None
 
+class UserMemory:
+    def __init__(self):
+        self.in_middle = False
+        self.last_location = None
+        self.last_distance = None
+
+class Memory:
+    def __init__(self):
+        self.values = {}
+    def find_user(self, uid):
+        if self.values.get(uid) is None:
+            self.values[uid] = UserMemory()
+        return self.values.get(uid)
+
+memory = Memory()
+
 @app.post('/',
           description='Update receiver')
 async def respond(update: Update):
@@ -33,8 +49,7 @@ async def respond(update: Update):
     uid = update.message.get('from', {}).get('id')
     if not uid:
         return 400
-    chid = update.message.get('chat', {}).get('id')
-    if not chid:
-        return 400
-    print(f'A message from {uid} in {chid}!')
+    print(f'A message from {uid}!')
+    status = memory.find_user(uid)
+    print(f'Current status of user {uid}: {vars(status)}')
     return 200
