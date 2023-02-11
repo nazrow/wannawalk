@@ -206,10 +206,10 @@ async def send_location(chid, start, distance):
                                               f'\n\nYou can now enter another starting point, '
                                               f'adjust distance or reroll with previous settings.',
                                       'parse_mode': 'MarkdownV2',
-                                      'reply_markup': {
-                                          'keyboard': [[{'text': '🎲'}]],
-                                          'one_time_keyboard': True
-                                      }
+                                      # 'reply_markup': {
+                                      #     'keyboard': [[{'text': '🎲'}]],
+                                      #     'one_time_keyboard': True
+                                      # }
                                       }) as response:
             pass
 
