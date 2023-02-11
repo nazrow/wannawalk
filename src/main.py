@@ -169,6 +169,8 @@ async def send_message(chid, text):
     async with aiohttp.ClientSession() as session:
         async with session.post(f'https://api.telegram.org/bot{TOKEN}/sendMessage', json={'chat_id': chid, 'text': text}) as response:
             print(response.status)
+            body = await response.text()
+            print(body)
 
 
 async def send_location(chid, start, distance):
@@ -190,6 +192,8 @@ async def send_location(chid, start, distance):
     async with aiohttp.ClientSession() as session:
         async with session.post(f'https://api.telegram.org/bot{TOKEN}/sendLocation', json={'chat_id': chid, 'latitude': current_lat, 'longitude': current_long, 'reply_markup': [[{'text': '🎲'}]]}) as response:
             print(response.status)
+            body = await response.text()
+            print(body)
 
 
 @app.post('/',
@@ -200,12 +204,11 @@ async def respond(update: Update):
     print(update.message)
     uid = update.message.get('from', {}).get('id')
     if not uid:
-        return 400
+        return 401
     chid = update.message.get('chat', {}).get('id')
     if not chid:
         return 400
     status = memory.find_user(uid)
-    print(f'Current status of user {uid}: {vars(status)}')
     status.parse_message(update.message)
     status.generate_response()
     await send_message(chid, status.last_output.text)
