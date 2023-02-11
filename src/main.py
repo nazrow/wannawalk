@@ -9,6 +9,6 @@ app = FastAPI(
 
 @app.post('/',
           description='Update receiver')
-async def respond():
-    print('Got some')
+async def respond(update):
+    print(update)
     return True
