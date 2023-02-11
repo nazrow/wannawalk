@@ -1,6 +1,7 @@
 import random
 import math
 import os
+import aiohttp
 
 from fastapi import FastAPI
 from pydantic import BaseModel
