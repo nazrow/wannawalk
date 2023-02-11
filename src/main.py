@@ -14,6 +14,8 @@ app = FastAPI(
     version='1.0'
 )
 
+TOKEN = os.environ.get("WANNAWALK_TOKEN")
+
 
 class Update(BaseModel):
     update_id: int
@@ -39,7 +41,8 @@ class Location:
             self.latitude = location.get('latitude')
             self.longitude = location.get('longitude')
         elif text:
-            parts = text.upper().replace(' N', 'N').replace(' E', 'E').replace(' W', 'W').replace(' S', 'S').replace(',', ' ').replace('  ', ' ').split(' ')
+            parts = text.upper().replace(' N', 'N').replace(' E', 'E').replace(' W', 'W').replace(' S', 'S')\
+                .replace(',', ' ').replace('  ', ' ').split(' ')
             if len(parts) != 2:
                 raise Exception
             values = []
@@ -121,11 +124,13 @@ class UserMemory:
             if -90 < self.last_input.latitude < 90 and -180 < self.last_input.longitude < 180:
                 self.last_location = self.last_input
                 self.last_distance = None
-                self.last_output = Response(text='Starting location acquired. How far do you want to venture? (Kilometers only, please)')
+                self.last_output = Response(text='Starting location acquired. How far do you want to venture? '
+                                                 '(Kilometers only, please)')
             else:
                 self.last_location = None
                 self.last_distance = None
-                self.last_output = Response(text='Some weird ass location you got there. No can do, please remain within earthly boundaries (-90...90 latitude, -180...180 longitude).')
+                self.last_output = Response(text='Some weird ass location you got there. No can do, please remain '
+                                                 'within earthly boundaries (-90...90 latitude, -180...180 longitude).')
         elif isinstance(self.last_input, Distance):
             if self.last_location is None:
                 self.last_output = Response(text='Please, send me a starting location first.')
@@ -144,11 +149,14 @@ class UserMemory:
                 self.last_output = Response(text='I can\'t reroll, give me a location first.')
         elif self.last_input == 'UNINTELLIGIBLE':
             if self.last_location and self.last_distance:
-                self.last_output = Response(text='Huh? You want me to reroll for same location and distance?')
+                self.last_output = Response(text='Huh? You want me to reroll for same location and distance? '
+                                                 'Adjust them, if not.')
             elif self.last_location:
-                self.last_output = Response(text='I\'m sorry, I only take distance as a number of kilometers (like, 3, 5, 10 or 186.4).')
+                self.last_output = Response(text='I\'m sorry, I only take distance as a number of kilometers '
+                                                 '(like, 3, 5, 10 or 186.4).')
             else:
-                self.last_output = Response(text='What? Give me a location, either as an attachable Telegram blip, or as a pair of coordinates.')
+                self.last_output = Response(text='What? Give me a location, either as an attachable Telegram blip, '
+                                                 'or as a pair of coordinates.')
         else:
             self.last_output = Response('Huh? Who goes there?')
 
@@ -163,14 +171,13 @@ class Memory:
 
 
 memory = Memory()
-TOKEN = os.environ.get("WANNAWALK_TOKEN")
+
 
 async def send_message(chid, text):
     async with aiohttp.ClientSession() as session:
-        async with session.post(f'https://api.telegram.org/bot{TOKEN}/sendMessage', json={'chat_id': chid, 'text': text}) as response:
-            print(response.status)
-            body = await response.text()
-            print(body)
+        async with session.post(f'https://api.telegram.org/bot{TOKEN}/sendMessage', json={'chat_id': chid,
+                                                                                          'text': text}) as response:
+            pass
 
 
 async def send_location(chid, start, distance):
@@ -190,10 +197,21 @@ async def send_location(chid, start, distance):
         current_long = current_long - step_long
         distance_value -= step
     async with aiohttp.ClientSession() as session:
-        async with session.post(f'https://api.telegram.org/bot{TOKEN}/sendLocation', json={'chat_id': chid, 'latitude': current_lat, 'longitude': current_long, 'reply_markup': {'keyboard': [[{'text': '🎲'}]], 'one_time_keyboard': True}}) as response:
-            print(response.status)
-            body = await response.text()
-            print(body)
+        async with session.post(f'https://api.telegram.org/bot{TOKEN}/sendLocation',
+                                json={'chat_id': chid, 'latitude': current_lat, 'longitude': current_long}) as response:
+            pass
+        async with session.post(f'https://api.telegram.org/bot{TOKEN}/sendMessage',
+                                json={'chat_id': chid,
+                                      'text': f'Your location is:\n\n`{current_lat}, {current_long}`'
+                                              f'\n\nYou can now enter another starting point, '
+                                              f'adjust distance or reroll with previous settings.',
+                                      'parse_mode': 'MarkdownV2',
+                                      'reply_markup': {
+                                          'keyboard': [[{'text': '🎲'}]],
+                                          'one_time_keyboard': True
+                                      }
+                                      }) as response:
+            pass
 
 
 @app.post('/',
