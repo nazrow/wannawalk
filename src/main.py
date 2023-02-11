@@ -204,7 +204,7 @@ async def send_location(chid, start, distance):
                                 json={'chat_id': chid,
                                       'text': f'Your location is:\n\n`{current_lat}, {current_long}`'
                                               f'\n\nYou can now enter another starting point, '
-                                              f'adjust distance or reroll with previous settings.',
+                                              f'adjust distance or reroll with previous settings\.',
                                       'parse_mode': 'MarkdownV2',
                                       # 'reply_markup': {
                                       #     'keyboard': [[{'text': '🎲'}]],
