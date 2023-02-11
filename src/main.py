@@ -90,32 +90,40 @@ class UserMemory:
         elif dice:
             self.last_input = 'REROLL'
         elif text:
-            reroll_triggers = [
-                '🎲',
-                'reroll',
-                'again',
-                'retry',
-                'еще',
-                'ещё',
-                'повтор'
-            ]
-            if any([s in text for s in reroll_triggers]):
-                self.last_input = 'REROLL'
+            if text == 'NEW LOCATION':
+                self.last_location = None
+                self.last_distance = None
+                self.last_input = 'CLEAR'
+            elif text == 'ADJUST DISTANCE':
+                self.last_distance = None
+                self.last_input = 'ADJUST'
             else:
-                try:
-                    location = Location(text=text)
-                except:
-                    location = None
-                try:
-                    distance = Distance(text=text)
-                except:
-                    distance = None
-                if location:
-                    self.last_input = location
-                elif distance:
-                    self.last_input = distance
+                reroll_triggers = [
+                    '🎲',
+                    'reroll',
+                    'again',
+                    'retry',
+                    'еще',
+                    'ещё',
+                    'повтор'
+                ]
+                if any([s in text for s in reroll_triggers]):
+                    self.last_input = 'REROLL'
                 else:
-                    self.last_input = 'UNINTELLIGIBLE'
+                    try:
+                        location = Location(text=text)
+                    except:
+                        location = None
+                    try:
+                        distance = Distance(text=text)
+                    except:
+                        distance = None
+                    if location:
+                        self.last_input = location
+                    elif distance:
+                        self.last_input = distance
+                    else:
+                        self.last_input = 'UNINTELLIGIBLE'
         else:
             self.last_input = 'UNINTELLIGIBLE'
 
@@ -124,7 +132,7 @@ class UserMemory:
             if -90 < self.last_input.latitude < 90 and -180 < self.last_input.longitude < 180:
                 self.last_location = self.last_input
                 self.last_distance = None
-                self.last_output = Response(text='Starting location acquired. How far do you want to venture? '
+                self.last_output = Response(text='Starting location acquired.\nHow far do you want to venture? '
                                                  '(Kilometers only, please)')
             else:
                 self.last_location = None
@@ -147,6 +155,13 @@ class UserMemory:
                 self.last_output = Response(text='I can\'t reroll, give me a distance first.')
             else:
                 self.last_output = Response(text='I can\'t reroll, give me a location first.')
+        elif self.last_input == 'CLEAR':
+            self.last_output = Response(text='Send me your starting location.')
+        elif self.last_input == 'ADJUST':
+            if self.last_location:
+                self.last_output = Response(text='Send me new a distance value.')
+            else:
+                self.last_output = Response(text='Gonna need a location first.')
         elif self.last_input == 'UNINTELLIGIBLE':
             if self.last_location and self.last_distance:
                 self.last_output = Response(text='Huh? You want me to reroll for same location and distance? '
@@ -175,9 +190,10 @@ memory = Memory()
 
 async def send_message(chid, text):
     async with aiohttp.ClientSession() as session:
-        async with session.post(f'https://api.telegram.org/bot{TOKEN}/sendMessage', json={'chat_id': chid,
-                                                                                          'text': text}) as response:
-            pass
+        for line in text.split('\n'):
+            async with session.post(f'https://api.telegram.org/bot{TOKEN}/sendMessage', json={'chat_id': chid,
+                                                                                              'text': line}) as response:
+                pass
 
 
 async def send_location(chid, start, distance):
@@ -207,11 +223,12 @@ async def send_location(chid, start, distance):
                                               f'\n\nYou can now enter another starting point, '
                                               f'adjust distance or reroll with previous settings\.',
                                       'parse_mode': 'MarkdownV2',
-                                      # 'reply_markup': {
-                                      #     'keyboard': [[{'text': '🎲'}]],
-                                      #     'one_time_keyboard': True
-                                      # }
-                                      }) as response:
+                                      'reply_markup': {
+                                          'keyboard': [[{'text': 'NEW LOCATION'},
+                                                        {'text': '🎲'},
+                                                        {'text': 'ADJUST DISTANCE'}]],
+                                          'one_time_keyboard': True
+                                      }}) as response:
             print(await response.text())
 
 
