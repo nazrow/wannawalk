@@ -197,8 +197,8 @@ async def send_message(chid, text):
 
 
 async def send_location(chid, start, distance):
-    distance_swing = max(1.5, 0.1 * distance.klix)
-    distance_frame = (max(0, distance.klix-distance_swing), distance.klix+distance_swing)
+    distance_swing = max(1, 0.1 * distance.klix)
+    distance_frame = (max(0, distance.klix-distance_swing), distance.klix)
     distance_value = random.uniform(*distance_frame)
     direction = math.radians(random.uniform(0, 360))
     current_long = start.longitude
