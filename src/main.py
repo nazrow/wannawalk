@@ -142,12 +142,12 @@ class UserMemory:
         elif isinstance(self.last_input, Distance):
             if self.last_location is None:
                 self.last_output = Response(text='Please, send me a starting location first.')
-            elif 0 < self.last_input.klix < 4000:
+            elif 0.1 <= self.last_input.klix <= 4000:
                 self.last_distance = self.last_input
                 self.last_output = Response(text='Distance acquired.', generate=True)
             else:
                 self.last_distance = None
-                self.last_output = Response(text='I can\'t take you that far. 0 to 4000 km only, please.')
+                self.last_output = Response(text='I can\'t take you that far. 0.1 to 4000 km only, please.')
         elif self.last_input == 'REROLL':
             if self.last_location and self.last_distance:
                 self.last_output = Response(text='Trying again...', generate=True)
